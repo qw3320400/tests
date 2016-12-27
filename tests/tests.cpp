@@ -81,7 +81,7 @@ void MaxHeapTest()
 	for (int i = 0; i < 100; ++i)
 	{
 		int num = rand() % 1000;
-		mh.Select(num);
+		mh.Select(oddint(num));
 		std::cout << num << " ";
 	}
 

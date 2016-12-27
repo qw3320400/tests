@@ -77,8 +77,11 @@ public:
 	template <typename Tx>
 	void Select(Tx&& param)
 	{
-		data[0] = std::forward<Tx>(param);
-		AdjustOne(1, false);
+		if (data[0] > param)
+		{
+			data[0] = std::forward<Tx>(param);
+			AdjustOne(1, false);
+		}
 	}
 
 private:
