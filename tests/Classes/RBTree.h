@@ -1,4 +1,3 @@
-// RBTree.h
 #ifndef _RBTREE_H
 #define _RBTREE_H
 
@@ -51,18 +50,30 @@ private:
 			delete this;
 		}
 
-		void PrintWithDeep(int deep)
+// 		void PrintWithDeep(int deep)
+// 		{
+// 			--deep;
+// 			if (deep == 0)
+// 			{
+// 				std::cout << data << ":" << ((color == NodeColor::BLACK) ? "B" : "R") << " ";
+// 				return;
+// 			}
+// 			if (leftchild)
+// 				leftchild->PrintWithDeep(deep);
+// 			if (rightchild)
+// 				rightchild->PrintWithDeep(deep);
+// 		}
+
+		void InsertIntoCompleteTree(std::vector<T> *target, unsigned int index)
 		{
-			--deep;
-			if (deep == 0)
-			{
-				std::cout << data << ":" << ((color == NodeColor::BLACK) ? "B" : "R") << " ";
-				return;
-			}
+#ifdef _DEBUG
+			assert(target->size() >= index);
+#endif	
+			(*target)[index - 1] = data;
 			if (leftchild)
-				leftchild->PrintWithDeep(deep);
+				leftchild->InsertIntoCompleteTree(target, index * 2);
 			if (rightchild)
-				rightchild->PrintWithDeep(deep);
+				rightchild->InsertIntoCompleteTree(target, index * 2 + 1);
 		}
 	};
 
@@ -97,11 +108,33 @@ public:
 	void PrintSelf()
 	{
 		int maxdeep = static_cast<int>(std::log2(count)) + 1;
-		for (int i = 1; i <= maxdeep; ++i)
+// 		for (int i = 1; i <= maxdeep; ++i)
+// 		{
+// 			treeroot->PrintWithDeep(i);
+// 			std::cout << std::endl;
+// 		}
+
+		//生成完成二叉树
+		std::vector<T> *completeTree = new std::vector<T>((0x1 << maxdeep) - 1, T());
+		treeroot->InsertIntoCompleteTree(completeTree, 1);
+		
+		int tabcount = (completeTree->size() + 1) / 4;
+		for (int i = 0, tar_idx = 0, line_count = 1; i < maxdeep; ++i)
 		{
-			treeroot->PrintWithDeep(i);
+			for (int j = 0; j < tabcount - (line_count / 2 + 1); ++j)
+			{
+				std::cout << "\t";
+			}
+			for (int j = 0; j < line_count; ++j)
+			{
+				std::cout << (*completeTree)[tar_idx] /*<< ":" << ((color == RBTree::NodeColor::BLACK) ? "B" : "R")*/ << "\t";
+				++tar_idx;
+			}
+			line_count = line_count * 2;
 			std::cout << std::endl;
 		}
+
+		delete completeTree;
 	}
 
 	template <typename Tx>
