@@ -5,49 +5,6 @@
 #include "Classes/RBTree.h"
 #include "Classes/MaxHeap.h"
 
-struct oddint
-{
-	int data;
-
-	oddint()
-		:data(0)
-	{}
-
-	oddint(int p)
-		:data(p)
-	{}
-
-	bool operator > (const oddint& p) const throw()
-	{
-		return data < p.data;
-	}
-
-	bool operator == (const oddint& p) const throw()
-	{
-		return data == p.data;
-	}
-
-	bool operator < (const oddint& p) const throw()
-	{
-		return data > p.data;
-	}
-
-	bool operator >= (const oddint& p) const throw()
-	{
-		return data <= p.data;
-	}
-
-	bool operator <= (const oddint& p) const throw()
-	{
-		return data >= p.data;
-	}
-
-	operator int() const throw()
-	{
-		return data;
-	}
-};
-
 void RBTreeTest()
 {
 	srand((unsigned int)time(nullptr));
@@ -67,7 +24,7 @@ void RBTreeTest()
 void MaxHeapTest()
 {
 	srand((unsigned int)time(nullptr));
-	MaxHeap<oddint> mh{}; //最小堆
+	Heap<int, HeapType::MinHeap> mh{}; //最小堆
 	for (int i = 0; i < 10; ++i)
 	{
 		int num = rand() % 1000;
@@ -81,7 +38,7 @@ void MaxHeapTest()
 	for (int i = 0; i < 100; ++i)
 	{
 		int num = rand() % 1000;
-		mh.Select(oddint(num));
+		mh.Select(num);
 		std::cout << num << " ";
 	}
 
