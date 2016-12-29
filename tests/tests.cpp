@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Classes/RBTree.h"
 #include "Classes/MaxHeap.h"
+#include "Classes/Tools.h"
 
 void RBTreeTest()
 {
@@ -48,10 +49,30 @@ void MaxHeapTest()
 	std::cout << "--------------------" << std::endl;
 }
 
+void FastSortTest()
+{
+	srand((unsigned int)time(nullptr));
+	int v[20];
+	for (int i = 0; i < 20; ++i)
+	{
+		int num = rand() % 1000;
+		v[i] = num;
+		std::cout << num << " ";
+	}
+
+	std::cout << std::endl << "----MaxHeap Test----" << std::endl;
+	FastSort(v, v + 19);
+	std::for_each(v, v + 20, [](const int& p){
+		std::cout << p << " ";
+	});
+	std::cout << std::endl << "--------------------" << std::endl;
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//RBTreeTest();
-	MaxHeapTest();
+	//MaxHeapTest();
+	FastSortTest();
 
 	_getch();
 	return 0;

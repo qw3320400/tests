@@ -1,27 +1,45 @@
 #ifndef _MAXHEAP_H
 #define _MAXHEAP_H
 
-template <typename T>
-class MaxHeap
+enum class HeapType
 {
+	MaxHeap,
+	MinHeap
+};
+
+template <typename T, HeapType HT>
+class Heap
+{
+private:
+	template <HeapType X>
+	bool Larger(const T& left, const T& right) const
+	{
+		return left > right;
+	}
+	template <>
+	bool Larger<HeapType::MinHeap>(const T& left, const T& right) const
+	{
+		return left < right;
+	}
+
 public:
-	MaxHeap()
+	Heap()
 		: data()
 	{}
 
 	template <typename Tx>
-	MaxHeap(Tx&& param)
+	Heap(Tx&& param)
 		: data(std::forward<Tx>(param))
 	{}
 
 	template <typename Tx>
-	MaxHeap& operator = (Tx&& param)
+	Heap& operator = (Tx&& param)
 	{
 		data = std::forward<Tx>(param);
 		return *this;
 	}
 
-	~MaxHeap()
+	~Heap()
 	{}
 
 	//insert 是否调整
@@ -52,12 +70,12 @@ public:
 		{
 			if ((i + 1) * 2 + 1 > datacount) //没有右子
 			{
-				if (data[(i + 1) * 2 - 1] > data[i])
+				if (Larger<HT>(data[(i + 1) * 2 - 1], data[i]))/*(data[(i + 1) * 2 - 1] > data[i])*/
 					return false;
 			}
 			else
 			{
-				if (data[(i + 1) * 2 - 1] > data[i] || data[(i + 1) * 2] > data[i])
+				if (Larger<HT>(data[(i + 1) * 2 - 1], data[i]) || Larger<HT>(data[(i + 1) * 2], data[i]))/*(data[(i + 1) * 2 - 1] > data[i] || data[(i + 1) * 2] > data[i])*/
 					return false;
 			}
 		}
@@ -77,7 +95,7 @@ public:
 	template <typename Tx>
 	void Select(Tx&& param)
 	{
-		if (data[0] > param)
+		if (Larger<HT>(data[0], param))/*(data[0] > param)*/
 		{
 			data[0] = std::forward<Tx>(param);
 			AdjustOne(1, false);
@@ -98,16 +116,16 @@ private:
 		}
 		else if (index * 2 == data.size()) //只有一个左孩子
 		{
-			if (data[index - 1] > data[index * 2 - 1])
+			if (Larger<HT>(data[index - 1], data[index * 2 - 1]))/*(data[index - 1] > data[index * 2 - 1])*/
 				return;
 			else
 				swap_idx = index * 2;
 		}
 		else
 		{
-			if (data[index - 1] > data[index * 2 - 1] && data[index - 1] > data[index * 2])
+			if (Larger<HT>(data[index - 1], data[index * 2 - 1]) && Larger<HT>(data[index - 1], data[index * 2]))/*(data[index - 1] > data[index * 2 - 1] && data[index - 1] > data[index * 2])*/
 				return;
-			else if (data[index * 2 - 1] > data[index * 2])
+			else if (Larger<HT>(data[index * 2 - 1], data[index * 2]))/*(data[index * 2 - 1] > data[index * 2])*/
 				swap_idx = index * 2;
 			else
 				swap_idx = index * 2 + 1;
