@@ -5,6 +5,7 @@
 #include "Classes/RBTree.h"
 #include "Classes/MaxHeap.h"
 #include "Classes/Tools.h"
+#include "Classes/TMPTest.h"
 
 void RBTreeTest()
 {
@@ -68,11 +69,17 @@ void FastSortTest()
 	std::cout << std::endl << "--------------------" << std::endl;
 }
 
+void TMPTest()
+{
+	
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//RBTreeTest();
 	//MaxHeapTest();
-	FastSortTest();
+	//FastSortTest();
+	TMPTest();
 
 	_getch();
 	return 0;
