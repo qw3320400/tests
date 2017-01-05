@@ -71,7 +71,11 @@ void FastSortTest()
 
 void TMPTest()
 {
-	
+	//typedef TYPELIST_5(int, char, bool, float, double) T;
+	using TL = TYPELIST_5(int, char, bool, float, double);
+	std::cout << "LengthOfTypeList : " << LengthOfTypeList<TL>::result << std::endl;
+	std::cout << "IndexTypeList : " << typeid(IndexTypeList<TL, 3>::type).name() << std::endl;
+	std::cout << "FindInTypeList : " << FindInTypeList<TL, char>::result << std::endl;
 }
 
 int _tmain(int argc, _TCHAR* argv[])

@@ -122,12 +122,66 @@ struct PointerToMember<T U::*>
 
 //-----------------
 
-// template<typename ...T>
-// struct TypeList
-// {
-// 	enum {
-// 		T = 0
-// 	};
-// };
+struct NullType;
+
+//-----------------
+
+template<typename T, typename U>
+struct TypeList
+{
+	typedef T Head;
+	typedef U Tail;
+};
+
+#define TYPELIST_1(T1) TypeList<T1, NullType>
+#define TYPELIST_2(T1, T2) TypeList<T1, TYPELIST_1(T2)>
+#define	TYPELIST_3(T1, T2, T3) TypeList<T1, TYPELIST_2(T2, T3)>
+#define	TYPELIST_4(T1, T2, T3, T4) TypeList<T1, TYPELIST_3(T2, T3, T4)>
+#define	TYPELIST_5(T1, T2, T3, T4, T5) TypeList<T1, TYPELIST_4(T2, T3, T4, T5)>
+
+template<typename T>
+struct LengthOfTypeList;
+template<typename T>
+struct LengthOfTypeList<TypeList<T, NullType> >
+{
+	enum {result =  1};
+};
+template<typename T, typename U>
+struct LengthOfTypeList<TypeList<T, U> >
+{
+	enum {result = 1 + LengthOfTypeList<U>::result};
+};
+
+template<typename T, unsigned int I>
+struct IndexTypeList;
+template<typename T, typename U>
+struct IndexTypeList<TypeList<T, U>, 0>
+{
+	typedef T type;
+};
+template<typename T, typename U, unsigned int I>
+struct IndexTypeList<TypeList<T, U>, I>
+{
+	typedef typename IndexTypeList<U, I - 1>::type type;
+};
+
+template<typename T, typename U>
+struct FindInTypeList;
+template<typename T>
+struct FindInTypeList<NullType, T>
+{
+	enum {result = -1};
+};
+template<typename T, typename U>
+struct FindInTypeList<TypeList<T, U>, T>
+{
+	enum {result = 0};
+};
+template<typename T, typename U, typename V>
+struct FindInTypeList<TypeList<T, U>, V>
+{
+	//enum { temp = FindInTypeList<U, V>::result };
+	enum { result = FindInTypeList<U, V>::result == -1 ? -1 : FindInTypeList<U, V>::result + 1 };
+};
 
 #endif
