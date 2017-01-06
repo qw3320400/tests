@@ -74,8 +74,23 @@ void TMPTest()
 	//typedef TYPELIST_5(int, char, bool, float, double) T;
 	using TL = TYPELIST_5(int, char, bool, float, double);
 	std::cout << "LengthOfTypeList : " << LengthOfTypeList<TL>::result << std::endl;
+
 	std::cout << "IndexTypeList : " << typeid(IndexTypeList<TL, 3>::type).name() << std::endl;
+
 	std::cout << "FindInTypeList : " << FindInTypeList<TL, char>::result << std::endl;
+
+	using TL1 = AddToTypeList<TL, short, 4>::type;
+	std::cout << "AddToTypeList : " << typeid(TL1).name() << std::endl;
+
+	using TL2 = RemoveFromTypeList<TL1, 3>::type;
+	std::cout << "RemoveFromTypeList : " << typeid(TL2).name() << std::endl;
+
+	using TL3 = RemoveAllTFromTypeList<TL2, char>::type;
+	std::cout << "RemoveAllTFromTypeList : " << typeid(TL3).name() << std::endl;
+
+	using TL4 = TYPELIST_5(int, char, int, char, double);
+	using TL5 = RemoveRepeatFromTypeList<TL4>::type;
+	std::cout << "RemoveRepeatFromTypeList : " << typeid(TL5).name() << std::endl;
 }
 
 int _tmain(int argc, _TCHAR* argv[])

@@ -184,4 +184,73 @@ struct FindInTypeList<TypeList<T, U>, V>
 	enum { result = FindInTypeList<U, V>::result == -1 ? -1 : FindInTypeList<U, V>::result + 1 };
 };
 
+template<typename T, typename U, int I>
+struct AddToTypeList;
+template<typename T, typename U, typename V, int I>
+struct AddToTypeList<T, TypeList<U, V>, I>;
+template<typename T>
+struct AddToTypeList<NullType, T, 0>
+{
+	typedef TypeList<T, NullType> type;
+};
+template<typename T, typename U, typename V>
+struct AddToTypeList<TypeList<T, U>, V, 0>
+{
+	typedef TypeList<V, TypeList<T, U> > type;
+};
+template<typename T, typename U, typename V, int I>
+struct AddToTypeList<TypeList<T, U>, V, I>
+{
+	typedef TypeList<T, typename AddToTypeList<U, V, I - 1>::type> type;
+};
+
+template<typename T, int I>
+struct RemoveFromTypeList;
+template<typename T, typename U>
+struct RemoveFromTypeList<TypeList<T, U>, 0>
+{
+	typedef U type;
+};
+template<typename T, typename U, int I>
+struct RemoveFromTypeList<TypeList<T, U>, I>
+{
+	typedef TypeList<T, typename RemoveFromTypeList<U, I - 1>::type> type;
+};
+
+template<typename T, typename U>
+struct RemoveAllTFromTypeList;
+template<typename T>
+struct RemoveAllTFromTypeList<NullType, T>
+{
+	typedef NullType type;
+};
+template<typename T, typename U>
+struct RemoveAllTFromTypeList<TypeList<T, U>, T>
+{
+	//RemoveFirstT : typedef U type;
+	typedef typename RemoveAllTFromTypeList<U, T>::type type;
+};
+template<typename T, typename U, typename V>
+struct RemoveAllTFromTypeList<TypeList<T, U>, V>
+{
+	typedef TypeList<T, typename RemoveAllTFromTypeList<U, V>::type> type;
+};
+
+template<typename T>
+struct RemoveRepeatFromTypeList;
+template<>
+struct RemoveRepeatFromTypeList<NullType>
+{
+	typedef NullType type;
+};
+template<typename T, typename U>
+struct RemoveRepeatFromTypeList<TypeList<T, U> >
+{
+	typedef TypeList<T, 
+		typename RemoveRepeatFromTypeList<
+			typename RemoveAllTFromTypeList<U, T>::type
+		>::type
+	> type;
+};
+
 #endif
