@@ -87,6 +87,19 @@ struct SelectType<false, T, U>
 //-----------------
 
 template<typename T, typename U>
+struct SameType
+{
+	enum {result = false};
+};
+template<typename T>
+struct SameType<T, T>
+{
+	enum {result = true};
+};
+
+//-----------------
+
+template<typename T, typename U>
 class CastTest
 {
 private:
@@ -105,7 +118,7 @@ public:
 		result = (sizeof(Test(MakeT())) == sizeof(Small))
 	};
 };
-#define IS_BASE_OF(B, D) CastTest<B*, D*>::result
+#define IS_BASE_OF(B, D) (!SameType<B, D>::result && !SameType<B, void>::result && CastTest<D*, B*>::result)
 
 //-----------------
 
@@ -251,6 +264,64 @@ struct RemoveRepeatFromTypeList<TypeList<T, U> >
 			typename RemoveAllTFromTypeList<U, T>::type
 		>::type
 	> type;
+};
+
+template<typename T, typename U, typename V>
+struct ReplaceTypeList;
+template<typename T, typename U>
+struct ReplaceTypeList<NullType, T, U>
+{
+	typedef NullType type;
+};
+template<typename T, typename U, typename V>
+struct ReplaceTypeList<TypeList<T, U>, T, V>
+{
+	//ReplaceFirstT : typedef TypeList<V, U> type;
+	typedef TypeList<V, typename ReplaceTypeList<U, T, V>::type> type;
+};
+template<typename T, typename U, typename V, typename W>
+struct ReplaceTypeList<TypeList<T, U>, V, W>
+{
+	typedef TypeList<T, typename ReplaceTypeList<U, V, W>::type> type;
+};
+
+template<typename T>
+struct CompareElementTypeList;
+template<typename T, typename U, typename V>
+struct CompareElementTypeList<TypeList<T, TypeList<U, V> > >
+{
+	typedef typename SelectType<IS_BASE_OF(T, U), TypeList<U, TypeList<T, V> >, TypeList<T, TypeList<U, V> > >::type type;
+};
+
+template<typename T>
+struct MostDerivedToTopTypeList;
+template<typename T>
+struct MostDerivedToTopTypeList<TypeList<T, NullType> >
+{
+	typedef TypeList<T, NullType> temp;
+	typedef TypeList<T, NullType> type;
+};
+template<typename T, typename U>
+struct MostDerivedToTopTypeList<TypeList<T, U> >
+{
+	typedef typename MostDerivedToTopTypeList<U>::type temp;
+	typedef typename CompareElementTypeList<TypeList<T, temp> >::type type;
+};
+
+template<typename T>
+struct SortTypeList;
+template<typename T>
+struct SortTypeList<TypeList<T, NullType> >
+{
+	typedef TypeList<T, NullType> type;
+};
+template<typename T, typename U>
+struct SortTypeList<TypeList<T, U> >
+{
+	typedef typename MostDerivedToTopTypeList<TypeList<T, U> >::type temp;
+	typedef typename SortTypeList<typename RemoveFromTypeList<temp, 0>::type>::type tail;
+	typedef typename IndexTypeList<temp, 0>::type head;
+	typedef TypeList<head, tail> type;
 };
 
 #endif

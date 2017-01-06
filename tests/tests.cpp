@@ -69,6 +69,12 @@ void FastSortTest()
 	std::cout << std::endl << "--------------------" << std::endl;
 }
 
+class wiget { public: ~wiget(){} };
+//class scroll : public wiget {};
+class button : public wiget {};
+class graphicbutton : public button {};
+class graphiclabelbutton : public graphicbutton {};
+
 void TMPTest()
 {
 	//typedef TYPELIST_5(int, char, bool, float, double) T;
@@ -91,6 +97,18 @@ void TMPTest()
 	using TL4 = TYPELIST_5(int, char, int, char, double);
 	using TL5 = RemoveRepeatFromTypeList<TL4>::type;
 	std::cout << "RemoveRepeatFromTypeList : " << typeid(TL5).name() << std::endl;
+
+	using TL6 = ReplaceTypeList<TL4, int, long>::type;
+	std::cout << "ReplaceTypeList : " << typeid(TL6).name() << std::endl;
+
+	std::cout << "IS_BASE_OF : " << IS_BASE_OF(wiget, graphicbutton) << std::endl;
+
+	using TL7 = TYPELIST_4(wiget, graphiclabelbutton, button, graphicbutton);
+	using TL8 = MostDerivedToTopTypeList<TL7>::type;
+	std::cout << "MostDerivedToTopTypeList : " << typeid(TL8).name() << std::endl;
+	
+	using TL9 = SortTypeList<TL7>::type;
+	std::cout << "SortTypeList : " << typeid(TL9).name() << std::endl;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
