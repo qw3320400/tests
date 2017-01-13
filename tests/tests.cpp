@@ -109,6 +109,14 @@ void TMPTest()
 	
 	using TL9 = SortTypeList<TL7>::type;
 	std::cout << "SortTypeList : " << typeid(TL9).name() << std::endl;
+
+	using TL10 = UnitList<TL, Unit>;
+	std::cout << "UnitList : " << sizeof(TL10) << std::endl;
+
+	using TL11 = LineUnitList<TL, LineUnit>;
+	std::cout << "LineUnitList : " << sizeof(TL11) << std::endl;
+
+	funtest<int>(1);
 }
 
 int _tmain(int argc, _TCHAR* argv[])

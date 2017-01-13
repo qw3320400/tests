@@ -137,6 +137,9 @@ struct PointerToMember<T U::*>
 
 struct NullType;
 
+struct EmptyType
+{};
+
 //-----------------
 
 template<typename T, typename U>
@@ -319,9 +322,56 @@ template<typename T, typename U>
 struct SortTypeList<TypeList<T, U> >
 {
 	typedef typename MostDerivedToTopTypeList<TypeList<T, U> >::type temp;
-	typedef typename SortTypeList<typename RemoveFromTypeList<temp, 0>::type>::type tail;
-	typedef typename IndexTypeList<temp, 0>::type head;
+	typedef typename SortTypeList<typename temp::Tail>::type tail;
+	typedef typename temp::Head head;
 	typedef TypeList<head, tail> type;
 };
+
+//-----------------
+
+template<typename T>
+struct Unit
+{
+	T value;
+};
+
+template<typename T, template<typename> class U>
+struct UnitList
+	:public U<T>
+{};
+template<template<typename> class T>
+struct UnitList<NullType, T>
+{};
+template<typename T, typename U, template<typename> class V>
+struct UnitList<TypeList<T, U>, V>
+	:public UnitList<T, V>, public UnitList<U, V>
+{};
+
+//-----------------
+
+template<typename T, typename U>
+struct LineUnit : public U
+{
+	T value;
+};
+
+template<typename T, template<typename, typename> class U, typename ROOT = EmptyType>
+struct LineUnitList;
+template<template<typename, typename> class T, typename ROOT>
+struct LineUnitList<NullType, T, ROOT>
+	: public ROOT
+{};
+template<typename T, typename U, template<typename, typename> class V, typename ROOT>
+struct LineUnitList<TypeList<T, U>, V, ROOT>
+	: public V<T, LineUnitList<U, V, ROOT> >
+{};
+
+//-----------------
+
+template<typename T, typename = typename std::enable_if<std::is_same<int, T>::value>::type>
+void funtest(int)
+{
+	std::cout << "funtest111111" << std::endl;
+}
 
 #endif
